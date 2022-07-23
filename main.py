@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 import os.path
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -65,6 +67,8 @@ def run ():
         else:
             update_date_db(read_file())
         sleep(30)
+>>>>>>> ae94447a6dd7e53942b777ceb9819015ef414ff2
 
+from methods import run
 if __name__ == '__main__':
     run()
