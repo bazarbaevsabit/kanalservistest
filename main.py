@@ -12,7 +12,6 @@ from time import sleep
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 SAMPLE_SPREADSHEET_ID = '1TOgg44UslhS64YGIsnZiSbow9vg6BWwPNECQ9l3PQDw'
 SAMPLE_RANGE_NAME = 'Лист1!A2:D51'
-
 #процедура считывает файл с google диска
 def read_file():
     creds = None
@@ -33,24 +32,39 @@ def read_file():
         result = sheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID,
                                     range=SAMPLE_RANGE_NAME).execute()
         values = result.get('values', [])
-        if not values:
-            print('No data found.')
-            return 0
 
+        if not values:
+            print('Данных нет')
+            return 0
+        for i in values:
+            for j in i:
+                if j == '':
+                    print ('Некорректно заполнена таблица в Google документе в строке ', i[0])
+                    return 0
         #добавляем дополнительный столбец с стоимостью товара в рублях
         for i in values:
             i[2] = int (i[2])
             i.append(i[2]*curs_RUB(i[3]))
         values = tuple(values)
+
+        print ("Файл успешно считан с Google диска")
         return values
+    except ValueError as verr:
+        print ("Некорректные данные", verr)
+        return 0
     except HttpError as err:
-        print(err)
+        print( "Ошибка соединения",err)
         return 0
 
 def run ():
+
     while True:
-        update_date_db(read_file())
-        sleep(5)
+        value = read_file()
+        if value==0:
+            print ("Исправьте ошибку")
+        else:
+            update_date_db(read_file())
+        sleep(30)
 
 if __name__ == '__main__':
     run()
